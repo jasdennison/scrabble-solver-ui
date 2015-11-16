@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Scrabble Solver</title>
+  <script type="text/javascript" src="elm.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<script type="text/javascript">
+var storedState = localStorage.getItem('solver-state');
+var startingState = storedState ? JSON.parse(storedState) : null;
+
+var ss = Elm.fullscreen(Elm.ScrabbleSolver, { getStorage: startingState });
+
+ss.ports.focus.subscribe(function(selector) {
+  setTimeout(function() {
+    var nodes = document.querySelectorAll(selector);
+      if (nodes.length === 1 && document.activeElement !== nodes[0]) {
+        nodes[0].focus()
+      }
+  }, 50);
+});
+
+ss.ports.setStorage.subscribe(function(state) {
+    localStorage.setItem('solver-state', JSON.stringify(state))
+});
+
+</script>
+
+</body>
+</html>

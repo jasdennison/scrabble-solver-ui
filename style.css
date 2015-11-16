@@ -1,0 +1,196 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    line-height: 1.4em;
+    background: #eaeaea url('imgs/bg.png');
+    color: #4d4d4d;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -ms-font-smoothing: antialiased;
+    -o-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+}
+
+.button {
+    width: 33.3%;
+    height: 25px;
+    font-size: 1.8em;
+}
+
+div {
+    padding: 0 0;
+}
+
+#scrabble-solver-ui {
+  width: 560px;
+  margin: 0 auto;
+}
+
+#board {
+    width: 390px;
+    float: left;
+}
+
+.boardRow {
+    width: 100%;
+}
+
+.boardCell {
+    width: 20px;
+    height: 20px;
+    font-size: 1.2em;
+    text-align: center;
+    outline-width: 0;
+}
+
+.multDL {
+    background: #cee3f6;
+}
+
+.multTL {
+    background: #81bef7;
+}
+
+.multDW {
+    background: #f6cece;
+}
+
+.multTW {
+    background: #f78181;
+}
+
+.cursorRight {
+    background-image: url('imgs/rightArrow.png');
+    background-size: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+
+.cursorDown {
+    background-image: url('imgs/downArrow.png');
+    background-size: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.moveCell {
+    color: #2e9afe;
+    background-image: url('imgs/tile.png');
+    background-size: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.fullCell {
+    background-image: url('imgs/tile.png');
+    background-size: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+@keyframes listDrop {
+  from { height: 0px; }
+  to { height: 390px; }
+}
+
+#moveList {
+    width: 155px;
+    height: 390px;
+    overflow: auto;
+    float: right;
+    animation-name: listDrop;
+    animation-duration: 0.5s;
+}
+
+.moveItem {
+    width: 100%;
+    height: 20px;
+    float: left;
+    font-size: 1.1em;
+}
+
+.moveItem-active {
+    width: 100%;
+    height: 20px;
+    float: left;
+    font-size: 1.1em;
+    color: #239afe;
+}
+
+.moveWord {
+    width: 80%;
+    float: left;
+}
+
+.moveScore {
+    width: 20%;
+    float: left;
+}
+
+#controls {
+    width: 390px;
+    height: 100px;
+    clear: both;
+}
+
+#tileHand {
+    width: 59%;
+    height: 34px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-right: 15px;
+    font-size: 1.8em;
+    letter-spacing: 0.3em;
+    float: left;
+    outline-width: 0;
+}
+
+#boardTypeSelectors {
+    width: 34%;
+    height: 42px;
+    margin-top: 2px;
+    float: right;
+}
+
+.boardTypeSelector {
+    height: 20px;
+    font-size: 0.9em;
+}
+
+label {
+    margin-left: 3px;
+}
+
+#displayMessage {
+  width: 100%;
+  height: 20px;
+  clear: both;
+}
+
+.infoMessage {
+  color: #4d4d4d;
+}
+
+.errorMessage {
+  color: #df0101;
+}
+
+#footer {
+    height: 20px;
+    padding: 0 15px;
+    clear: both;
+    color: #777;
+    left: 0;
+    right: 0;
+    bottom: -31px;
+    z-index: 1;
+    text-align: center;
+}
+
+
