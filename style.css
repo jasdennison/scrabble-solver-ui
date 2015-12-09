@@ -27,12 +27,12 @@ div {
 }
 
 #scrabble-solver-ui {
-  width: 560px;
+  width: 670px;
   margin: 0 auto;
 }
 
 #board {
-    width: 390px;
+    width: 510px;
     float: left;
 }
 
@@ -41,11 +41,13 @@ div {
 }
 
 .boardCell {
-    width: 20px;
-    height: 20px;
-    font-size: 1.2em;
+    width: 32px;
+    height: 32px;
+    font-size: 1.4em;
     text-align: center;
-    outline-width: 0;
+    border: solid 1px #eaeaea;
+    padding: 0;
+    outline: none;
 }
 
 .multDL {
@@ -82,14 +84,14 @@ div {
 .moveCell {
     color: #2e9afe;
     background-image: url('imgs/tile.png');
-    background-size: 100%;
+    background-size: 90%;
     background-position: center center;
     background-repeat: no-repeat;
 }
 
 .fullCell {
     background-image: url('imgs/tile.png');
-    background-size: 100%;
+    background-size: 90%;
     background-position: center center;
     background-repeat: no-repeat;
 }
@@ -101,7 +103,7 @@ div {
 
 #moveList {
     width: 155px;
-    height: 390px;
+    height: 510px;
     overflow: auto;
     float: right;
     animation-name: listDrop;
