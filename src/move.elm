@@ -7,9 +7,6 @@ module Move
 import Array as Array exposing (Array)
 import Char
 import Json.Decode as Json exposing ((:=))
-import Parser exposing (..)
-import Parser.Char exposing (..)
-import Parser.Number exposing (..)
 import String
 
 import Board exposing (..)

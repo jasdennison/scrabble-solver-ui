@@ -38,18 +38,18 @@ update action model =
   case action of
 
     Reset ->
-      { model | moves <- Array.empty
-              , selectedMoveId <- Nothing }
+      { model | moves = Array.empty
+              , selectedMoveId = Nothing }
 
     SetMoveList ms ->
-      { model | moves <- ms
-              , selectedMoveId <- Nothing }
+      { model | moves = ms
+              , selectedMoveId = Nothing }
 
     SelectMove i ->
-      { model | selectedMoveId <- Just i }
+      { model | selectedMoveId = Just i }
 
     UnselectMove ->
-      { model | selectedMoveId <- Nothing }
+      { model | selectedMoveId = Nothing }
 
 
 ---- VIEW ----

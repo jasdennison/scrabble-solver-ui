@@ -65,37 +65,37 @@ update action model =
     NoOp -> model
 
     Reset ->
-      { model | board <- B.emptyBoard model.boardDesign.dimension
-              , boardBackup <- B.emptyBoard model.boardDesign.dimension }
+      { model | board = B.emptyBoard model.boardDesign.dimension
+              , boardBackup = B.emptyBoard model.boardDesign.dimension }
 
     SetTile pos cell newPos ->
       let newBoard = B.setBoardCell model.boardBackup pos cell
       in
-      { model | board <- newBoard
-              , boardBackup <- newBoard
-              , cursorPosition <- newPos }
+      { model | board = newBoard
+              , boardBackup = newBoard
+              , cursorPosition = newPos }
 
     SetBoardDesign bd ->
-      { model | boardDesign <- bd
-              , board <- model.boardBackup }
+      { model | boardDesign = bd
+              , board = model.boardBackup }
 
     SetCursor position ->
-      { model | cursorPosition <- position }
+      { model | cursorPosition = position }
 
     ToggleCursorDirection ->
-      { model | cursorDirection <- B.toggleDirection model.cursorDirection }
+      { model | cursorDirection = B.toggleDirection model.cursorDirection }
 
     ShowMove move ->
-      { model | board <- M.addMoveToBoard model.boardBackup move }
+      { model | board = M.addMoveToBoard model.boardBackup move }
 
     CommitMove ->
       let newBoard = Array.map (Array.map B.convertMoveToPlacement) model.board
       in
-      { model | board <- newBoard
-              , boardBackup <- newBoard }
+      { model | board = newBoard
+              , boardBackup = newBoard }
 
     ClearMove ->
-      { model | board <- model.boardBackup }
+      { model | board = model.boardBackup }
 
 
 ---- VIEW ----
@@ -170,20 +170,28 @@ calcCursorPosition pos dir dim =
 
 keyCodeToAction : Dimension -> Position -> Direction -> KeyCode -> Action
 keyCodeToAction dim pos dir k =
-  if | k.keyCode == 37 -> SetCursor (calcCursorPosition pos Left dim)
-     | k.keyCode == 38 -> SetCursor (calcCursorPosition pos Up dim)
-     | k.keyCode == 39 -> SetCursor (calcCursorPosition pos Right dim)
-     | k.keyCode == 40 -> SetCursor (calcCursorPosition pos Down dim)
-     | k.keyCode == 8  -> SetTile pos Empty (calcCursorPosition pos (B.oppositeDirection dir) dim)
-     | k.keyCode == 46 -> SetTile pos Empty pos
-     | k.keyCode >= 65 && k.keyCode <= 90 && (not k.shiftKey) ->
-         let tileValue = Full (B.charToTileValue (Char.toLower (Char.fromCode k.keyCode)))
-         in
-         SetTile pos tileValue (calcCursorPosition pos dir dim)
-     | k.keyCode >= 65 && k.keyCode <= 90 && k.shiftKey ->
-         let tileValue = Full (B.charToTileValue (Char.toUpper (Char.fromCode k.keyCode)))
-         in
-         SetTile pos tileValue (calcCursorPosition pos dir dim)
-     | k.keyCode == 32 -> ToggleCursorDirection
-     | otherwise -> NoOp
+  if k.keyCode == 37 then
+    SetCursor (calcCursorPosition pos Left dim)
+  else if k.keyCode == 38 then
+    SetCursor (calcCursorPosition pos Up dim)
+  else if k.keyCode == 39 then
+    SetCursor (calcCursorPosition pos Right dim)
+  else if k.keyCode == 40 then
+    SetCursor (calcCursorPosition pos Down dim)
+  else if k.keyCode == 8 then
+    SetTile pos Empty (calcCursorPosition pos (B.oppositeDirection dir) dim)
+  else if k.keyCode == 46 then
+    SetTile pos Empty pos
+  else if k.keyCode >= 65 && k.keyCode <= 90 && (not k.shiftKey) then
+    let tileValue = Full (B.charToTileValue (Char.toLower (Char.fromCode k.keyCode)))
+    in
+    SetTile pos tileValue (calcCursorPosition pos dir dim)
+  else if k.keyCode >= 65 && k.keyCode <= 90 && k.shiftKey then
+    let tileValue = Full (B.charToTileValue (Char.toUpper (Char.fromCode k.keyCode)))
+    in
+    SetTile pos tileValue (calcCursorPosition pos dir dim)
+  else if k.keyCode == 32 then
+    ToggleCursorDirection
+  else
+    NoOp
 

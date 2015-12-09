@@ -10,9 +10,9 @@ module Board
 
 import Array as Array exposing (Array)
 import Char
-import Parser exposing (..)
-import Parser.Char exposing (..)
-import Parser.Number exposing (..)
+import Combine exposing (..)
+import Combine.Char exposing (..)
+import Combine.Num exposing (..)
 import String
 
 type alias Dimension = (Int, Int)
@@ -48,8 +48,8 @@ setBoardCell board (x, y) cell =
 parseBoard : Dimension -> String -> Board
 parseBoard d s =
   case parse (pBoard d) s of
-    Ok b -> b
-    Err e -> emptyBoard d
+    (Done b, ctx) -> b
+    (Fail e, ctx) -> emptyBoard d
 
 pBoard : Dimension -> Parser Board
 pBoard (h, w) =
@@ -60,7 +60,7 @@ pBoard (h, w) =
 
 pBoardCell : Parser BoardCell
 pBoardCell =
-  ((symbol '.') `andThen` (\_ -> succeed Empty)) `or`
+  ((char '.') `andThen` (\_ -> succeed Empty)) `or`
   (lower `andThen` (\c -> succeed (Full (MarkedT c)))) `or`
   (upper `andThen` (\c -> succeed (Full (BlankT c))))
 
@@ -69,9 +69,6 @@ pRow n p =
   (count n p) `andThen` (\rs ->
   eol `andThen` (\_ ->
   succeed rs))
-
-eol : Parser Char
-eol = symbol '\n'
 
 count : Int -> Parser a -> Parser (List a)
 count n p =
@@ -135,9 +132,12 @@ normalisePosition (h, w) (x, y) =
 
 bound : Int -> Int -> Int -> Int
 bound lower upper value =
-  if | value < lower -> lower
-     | value > upper -> upper
-     | otherwise -> value
+  if value < lower then
+    lower
+  else if value > upper then
+    upper
+  else
+    value
 
 toggleDirection : Direction -> Direction
 toggleDirection d =

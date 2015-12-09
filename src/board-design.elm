@@ -7,9 +7,9 @@ module BoardDesign
   ) where
 
 import Array as Array exposing (Array)
-import Parser exposing (..)
-import Parser.Char exposing (..)
-import Parser.Number exposing (..)
+import Combine exposing (..)
+import Combine.Char exposing (..)
+import Combine.Num exposing (..)
 import Dict as Dict exposing (Dict)
 
 import Board exposing (Dimension, Position)
@@ -55,13 +55,11 @@ boardDesigns =
   in
   List.foldl addParsedBoards Dict.empty designs
 
-addParsedBoards : (String, String, Result String BoardDesign) -> Dict String BoardDesign -> Dict String BoardDesign
-addParsedBoards (id, raw, parsed) dict =
- let bd = Result.map (\r -> { r | name <- id, asString <- raw }) parsed
- in
- case bd of
-   Ok r -> Dict.insert r.name r dict
-   Err e -> dict -- error
+addParsedBoards : (String, String, (Combine.Result BoardDesign, Context)) -> Dict String BoardDesign -> Dict String BoardDesign
+addParsedBoards (id, raw, (parsed, ctx)) dict =
+ case parsed of
+   Done r -> Dict.insert id { r | name = id, asString = raw } dict
+   Fail e -> dict -- error
 
 scrabbleBoardDesign : String
 scrabbleBoardDesign = """15 15
@@ -120,28 +118,28 @@ parseBoardDesign =
 
 pDimension : Parser Dimension
 pDimension =
-  natural `andThen` (\h ->
-  (some space) `andThen` (\_ ->
-  natural `andThen` (\w ->
+  int `andThen` (\h ->
+  (many1 space) `andThen` (\_ ->
+  int `andThen` (\w ->
   eol `andThen` (\_ ->
   succeed (h, w)))))
 
 pLetterScore : Parser (Char, Int)
 pLetterScore =
   lower `andThen` (\c ->
-  (symbol '=') `andThen` (\_ ->
-  natural `andThen` (\s ->
+  (char '=') `andThen` (\_ ->
+  int `andThen` (\s ->
   succeed (c, s))))
 
 pLetterScores : Parser (Dict Char Int)
 pLetterScores =
-  (pLetterScore `separatedBy` space) `andThen` (\ls ->
+  (sepBy space pLetterScore) `andThen` (\ls ->
   eol `andThen` (\_ ->
   succeed (Dict.fromList ls)))
 
 pCharToMultiplier : Char -> TileMultiplier -> Parser TileMultiplier
 pCharToMultiplier c t =
-  (symbol c) `andThen` (\_ ->
+  (char c) `andThen` (\_ ->
   succeed t)
 
 pTileMultiplier : Parser TileMultiplier
@@ -160,7 +158,7 @@ pRow n p =
 
 pBonus : Parser Int
 pBonus =
-  natural `andThen` (\b ->
+  int `andThen` (\b ->
   eol `andThen` (\_ ->
   succeed b))
 
@@ -172,10 +170,7 @@ pMultiplierCells (h, w) =
   succeed (buildArray ms))
 
 space : Parser Char
-space = symbol ' '
-
-eol : Parser Char
-eol = symbol '\n'
+space = char ' '
 
 count : Int -> Parser a -> Parser (List a)
 count n p =

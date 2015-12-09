@@ -79,38 +79,33 @@ update action model =
     NoOp -> model
 
     Reset ->
-      { model | boardComponent <- BoardC.update BoardC.Reset model.boardComponent
-              , moveListComponent <- MoveListC.update MoveListC.Reset model.moveListComponent
-              , tileHand <- "" }
+      { model | boardComponent = BoardC.update BoardC.Reset model.boardComponent
+              , moveListComponent = MoveListC.update MoveListC.Reset model.moveListComponent
+              , tileHand = "" }
 
     SetTileHand t ->
-      { model | tileHand <- t }
+      { model | tileHand = t }
 
     SetMoveList ms ->
-      { model | boardComponent <- BoardC.update BoardC.ClearMove model.boardComponent
-              , moveListComponent <- MoveListC.update (MoveListC.SetMoveList ms) model.moveListComponent
-              , displayMessage <- Ok "" }
-
-    Reset ->
-      { model | boardComponent <- BoardC.update BoardC.Reset model.boardComponent
-              , moveListComponent <- MoveListC.update MoveListC.Reset model.moveListComponent
-              , tileHand <- "" }
+      { model | boardComponent = BoardC.update BoardC.ClearMove model.boardComponent
+              , moveListComponent = MoveListC.update (MoveListC.SetMoveList ms) model.moveListComponent
+              , displayMessage = Ok "" }
 
     SetBoardDesign name ->
-      { model | boardComponent <- BoardC.update (BoardC.SetBoardDesign name) model.boardComponent
-              , moveListComponent <- MoveListC.update MoveListC.Reset model.moveListComponent }
+      { model | boardComponent = BoardC.update (BoardC.SetBoardDesign name) model.boardComponent
+              , moveListComponent = MoveListC.update MoveListC.Reset model.moveListComponent }
 
     CommitMove ->
-      { model | boardComponent <- BoardC.update BoardC.CommitMove model.boardComponent
-              , moveListComponent <- MoveListC.update MoveListC.Reset model.moveListComponent
-              , tileHand <- "" }
+      { model | boardComponent = BoardC.update BoardC.CommitMove model.boardComponent
+              , moveListComponent = MoveListC.update MoveListC.Reset model.moveListComponent
+              , tileHand = "" }
 
     QueryInProgress ->
-      { model | moveListComponent <- MoveListC.update MoveListC.Reset model.moveListComponent
-              , displayMessage <- (Ok "Searching...") }
+      { model | moveListComponent = MoveListC.update MoveListC.Reset model.moveListComponent
+              , displayMessage = (Ok "Searching...") }
 
     ReportError msg ->
-      { model | displayMessage <- Err msg }
+      { model | displayMessage = Err msg }
 
 updateB : BoardC.Action -> Model -> Model
 updateB action model =
@@ -118,28 +113,32 @@ updateB action model =
     BoardC.NoOp -> model
 
     BoardC.SetTile pos cell newPos ->
-      { model | boardComponent <- BoardC.update action model.boardComponent
-              , moveListComponent <- MoveListC.update MoveListC.Reset model.moveListComponent }
+      { model | boardComponent = BoardC.update action model.boardComponent
+              , moveListComponent = MoveListC.update MoveListC.Reset model.moveListComponent }
 
     BoardC.SetCursor position ->
-      { model | boardComponent <- BoardC.update action model.boardComponent }
+      { model | boardComponent = BoardC.update action model.boardComponent }
 
     BoardC.ToggleCursorDirection ->
-      { model | boardComponent <- BoardC.update action model.boardComponent }
+      { model | boardComponent = BoardC.update action model.boardComponent }
+
+    _ -> model
 
 updateML : MoveListC.Action -> Model -> Model
 updateML action model =
   case action of
     MoveListC.SelectMove i ->
       if model.moveListComponent.selectedMoveId == Just i
-        then { model | boardComponent <- BoardC.update BoardC.ClearMove model.boardComponent
-                     , moveListComponent <- MoveListC.update MoveListC.UnselectMove model.moveListComponent }
+        then { model | boardComponent = BoardC.update BoardC.ClearMove model.boardComponent
+                     , moveListComponent = MoveListC.update MoveListC.UnselectMove model.moveListComponent }
         else case Array.get i model.moveListComponent.moves of
                Nothing ->
-                 { model | displayMessage <- Err "Selected move could not be found." }
+                 { model | displayMessage = Err "Selected move could not be found." }
                Just selectedMove ->
-                 { model | boardComponent <- BoardC.update (BoardC.ShowMove selectedMove) model.boardComponent
-                         , moveListComponent <- MoveListC.update (MoveListC.SelectMove i) model.moveListComponent }
+                 { model | boardComponent = BoardC.update (BoardC.ShowMove selectedMove) model.boardComponent
+                         , moveListComponent = MoveListC.update (MoveListC.SelectMove i) model.moveListComponent }
+
+    _ -> model
 
 
 ---- VIEW ----
@@ -268,7 +267,7 @@ getSolution query =
     Nothing -> Task.succeed Array.empty
 
 solveUrl : List (String, String) -> String
-solveUrl parameters = Http.url "http://localhost:8080/solve" parameters
+solveUrl parameters = Http.url "http://scrabble-solver.jasdennison.uk:8080/solve" parameters
 
 
 ---- INPUTS ----
@@ -305,12 +304,12 @@ startingModel =
       let storedBoardDesign = Maybe.withDefault (m.boardComponent.boardDesign) (Dict.get storedModel.boardDesignName BD.boardDesigns)
           storedBoard = B.parseBoard (storedBoardDesign.dimension) storedModel.board
           b = BoardC.initialModel
-          b' = { b | board <- storedBoard
-                   , boardBackup <- storedBoard
-                   , boardDesign <- storedBoardDesign }
+          b' = { b | board = storedBoard
+                   , boardBackup = storedBoard
+                   , boardDesign = storedBoardDesign }
       in
-      { m | boardComponent <- b'
-          , tileHand <- storedModel.tileHand }
+      { m | boardComponent = b'
+          , tileHand = storedModel.tileHand }
     Nothing -> m
 
 port requestSolution : Signal (Task Http.Error ())
